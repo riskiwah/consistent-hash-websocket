@@ -17,6 +17,6 @@ WORKDIR /usr/src/app
 COPY . .
 COPY --from=node-compiled node_modules node_modules
 
-# EXPOSE 5000
+EXPOSE 5000
 
 CMD [ "npm", "run", "start" ]

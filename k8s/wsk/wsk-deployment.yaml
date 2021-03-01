@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wsk-deploy
+  namespace: staging
 spec:
   replicas: 3
   selector:
@@ -16,11 +17,11 @@ spec:
     spec:
       containers:
         - name: websocket-base
-          image: "sw360cab/wsk-base:0.1.1"
+          image: riskiwah/websock-example:latest
           imagePullPolicy: IfNotPresent
           env:
-          - name: REDIS_HOST
-            value: "redis-master.default.svc"
+            - name: REDIS_HOST
+              value: "redis-master.staging"
           ports:
-          - name: websocket
-            containerPort: 5000
+            - name: websocket
+              containerPort: 5000

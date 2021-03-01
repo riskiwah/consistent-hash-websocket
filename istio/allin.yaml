@@ -1,0 +1,52 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gw-wsk-base
+  namespace: staging
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: vs-wsk-base
+  namespace: staging
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - gw-wsk-base
+  http:
+    - match:
+        - uri:
+            prefix: /wsk
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: wsk-svc.staging.svc.cluster.local
+            port:
+              number: 5000
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: dr-wsk-base
+  namespace: staging
+spec:
+  host: wsk-svc
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        httpCookie:
+          name: io
+          ttl: 300s
+        minimumRingSize: 10
